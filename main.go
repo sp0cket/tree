@@ -1,10 +1,12 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 )
 
 const (
@@ -13,6 +15,9 @@ const (
 	symbolConnNode   = "│ "
 	symbolIdent      = "\t"
 )
+
+var flagAll = flag.Bool("a", false, "List all files")
+var flagDepth = flag.Int("depth", 0, "Max depth")
 
 func printNode(depth int, symbol, name string, connectStack []int) {
 	node := ""
@@ -39,22 +44,28 @@ func visit(visitPath string, depth int, connectStack []int) error {
 	if err == nil {
 		fileCount := len(filesInfo) - 1
 		for idx, file := range filesInfo {
+			if *flagAll == false && strings.HasPrefix(file.Name(), ".") {
+				continue
+			}
+			name := file.Name()
 			if file.IsDir() {
+				name += "/"
+			}
+			if idx < fileCount {
+				printNode(depth, symbolNormalNode, name, connectStack)
+			} else {
+				printNode(depth, symbolEndNode, name, connectStack)
+			}
+			if file.IsDir() {
+				if *flagDepth > 0 && depth+1 >= *flagDepth {
+					continue
+				}
 				nextConnStack := connectStack
 				if idx < fileCount {
 					nextConnStack = append(nextConnStack, depth)
-					printNode(depth, symbolNormalNode, file.Name(), connectStack)
-				} else {
-					printNode(depth, symbolEndNode, file.Name(), connectStack)
 				}
 				if err := visit(path.Join(visitPath, file.Name()), depth+1, nextConnStack); err != nil {
 					return err
-				}
-			} else {
-				if idx < fileCount {
-					printNode(depth, symbolNormalNode, file.Name(), connectStack)
-				} else {
-					printNode(depth, symbolEndNode, file.Name(), connectStack)
 				}
 			}
 		}
@@ -63,6 +74,12 @@ func visit(visitPath string, depth int, connectStack []int) error {
 }
 
 func main() {
+	flag.Parse()
 	currentDir, _ := os.Getwd()
-	visit(currentDir, 0, make([]int, 0))
+	fmt.Println(currentDir)
+	err := visit(currentDir, 0, make([]int, 0))
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(-1)
+	}
 }
