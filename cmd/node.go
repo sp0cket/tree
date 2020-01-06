@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// File tree symbol.
 const (
 	symbolNormalNode = "├ "
 	symbolEndNode    = "└ "
@@ -19,6 +20,7 @@ type FileNode struct {
 	IsLastNode   bool
 }
 
+// Generate tree node string.
 func (node *FileNode) String() string {
 	str := ""
 	connectIdx := node.ConnectStack.Front()
@@ -36,5 +38,8 @@ func (node *FileNode) String() string {
 		str += symbolNormalNode
 	}
 	str += node.FileInfo.Name()
+	if node.FileInfo.IsDir() {
+		str += "/"
+	}
 	return str
 }

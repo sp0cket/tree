@@ -25,11 +25,6 @@ func visit(visitPath string, depth int, connectStack *list.List) error {
 			if FlagAll == false && strings.HasPrefix(file.Name(), ".") {
 				continue
 			}
-			name := file.Name()
-			if file.IsDir() {
-				name += "/"
-
-			}
 			cmd.PrintN(cmd.FileNode{
 				FileInfo:     file,
 				Depth:        depth,
@@ -46,6 +41,9 @@ func visit(visitPath string, depth int, connectStack *list.List) error {
 				}
 				if err := visit(path.Join(visitPath, file.Name()), depth+1, nextConnStack); err != nil {
 					return err
+				}
+				if idx < fileCount {
+					nextConnStack.Remove(nextConnStack.Back())
 				}
 			}
 		}
