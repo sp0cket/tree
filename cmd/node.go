@@ -7,9 +7,9 @@ import (
 
 // File tree symbol.
 const (
-	symbolNormalNode = "├ "
-	symbolEndNode    = "└ "
-	symbolConnNode   = "│ "
+	symbolNormalNode = "├─ "
+	symbolEndNode    = "└─ "
+	symbolConnNode   = "│  "
 	symbolIdent      = "\t"
 )
 
@@ -37,9 +37,11 @@ func (node *FileNode) String() string {
 	} else {
 		str += symbolNormalNode
 	}
-	str += node.FileInfo.Name()
+	name := node.FileInfo.Name()
 	if node.FileInfo.IsDir() {
-		str += "/"
+		name += "/"
+		name = "\033[35m" + name + "\033[0m"
 	}
+	str += name
 	return str
 }
