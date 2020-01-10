@@ -2,20 +2,21 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/mattn/go-isatty"
 	"os"
 )
 
 var (
-	outputFile  = os.Stdout
+	output      = os.Stdout
 	errorOutput = os.Stderr
 )
 
-func OutputFile(f *os.File) {
-	outputFile = f
+func Output(f *os.File) {
+	output = f
 }
 
 func PrintN(node FileNode) {
-	if _, err := fmt.Fprintln(outputFile, node.String()); err != nil {
+	if _, err := fmt.Fprintln(output, node.String()); err != nil {
 		PrintError(err)
 		os.Exit(-1)
 	}
@@ -26,8 +27,12 @@ func PrintError(err error, a ...interface{}) {
 }
 
 func Println(a ...interface{}) {
-	if _, err := fmt.Fprintln(outputFile, a); err != nil {
+	if _, err := fmt.Fprintln(output, a); err != nil {
 		PrintError(err)
 		os.Exit(-1)
 	}
+}
+
+func isTerminal(f *os.File) bool {
+	return isatty.IsTerminal(f.Fd())
 }

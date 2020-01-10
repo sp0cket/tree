@@ -40,7 +40,9 @@ func (node *FileNode) String() string {
 	name := node.FileInfo.Name()
 	if node.FileInfo.IsDir() {
 		name += "/"
-		name = "\033[35m" + name + "\033[0m"
+		if isTerminal(output) {
+			name = "\033[35m" + name + "\033[0m"
+		}
 	}
 	str += name
 	return str

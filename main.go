@@ -23,14 +23,14 @@ func main() {
 				cmd.PrintError(err)
 				os.Exit(-1)
 			}
-			cmd.OutputFile(file)
+			cmd.Output(file)
 		} else if os.IsNotExist(err) {
 			file, err := os.Create(*flagOutput)
 			if err != nil {
 				cmd.PrintError(err)
 				os.Exit(-1)
 			}
-			cmd.OutputFile(file)
+			cmd.Output(file)
 		} else {
 			if err != nil {
 				cmd.PrintError(err)
