@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"path"
 	"strings"
-	"tree/cmd"
 	"tree/model"
 )
 
@@ -27,12 +26,12 @@ func walk(walkPath string, depth int, connectStack *list.List) (*model.TotalInfo
 			if FlagAll == false && strings.HasPrefix(file.Name(), ".") {
 				continue
 			}
-			cmd.PrintN(model.FileNode{
+			model.FileNode{
 				FileInfo:     file,
 				Depth:        depth,
 				ConnectStack: connectStack,
 				IsLastNode:   idx == fileCount,
-			})
+			}.PrintNode()
 			if file.IsDir() {
 				if FlagDepth > 0 && depth+1 >= FlagDepth {
 					continue

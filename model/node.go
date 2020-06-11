@@ -2,7 +2,9 @@ package model
 
 import (
 	"container/list"
+	"fmt"
 	"os"
+	"tree/cmd"
 )
 
 // File tree symbol.
@@ -20,8 +22,7 @@ type FileNode struct {
 	IsLastNode   bool
 }
 
-// Generate tree node string.
-func (node *FileNode) String() string {
+func (node FileNode) PrintNode() {
 	str := ""
 	connectIdx := node.ConnectStack.Front()
 	for i := 0; i < node.Depth; i++ {
@@ -40,8 +41,13 @@ func (node *FileNode) String() string {
 	name := node.FileInfo.Name()
 	if node.FileInfo.IsDir() {
 		name += "/"
-		name = "\033[35m" + name + "\033[0m"
+		if cmd.IsTerminal() {
+			name = "\033[35m" + name + "\033[0m"
+		}
 	}
 	str += name
-	return str
+	if _, err := fmt.Fprintln(cmd.Output, str); err != nil {
+		cmd.PrintError(err)
+		os.Exit(-1)
+	}
 }
