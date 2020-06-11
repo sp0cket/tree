@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"tree/cmd"
+	"tree/utility"
 )
 
 // File tree symbol.
@@ -20,6 +21,7 @@ type FileNode struct {
 	Depth        int
 	ConnectStack *list.List
 	IsLastNode   bool
+	Size         int64
 }
 
 func (node FileNode) PrintNode() {
@@ -44,6 +46,8 @@ func (node FileNode) PrintNode() {
 		if cmd.IsTerminal() {
 			name = "\033[35m" + name + "\033[0m"
 		}
+	} else {
+		name = fmt.Sprintf("[ %s ] %s", utility.ByteCountBinary(node.Size), name)
 	}
 	str += name
 	if _, err := fmt.Fprintln(cmd.Output, str); err != nil {

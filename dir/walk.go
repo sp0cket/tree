@@ -29,6 +29,7 @@ func walk(walkPath string, depth int, connectStack *list.List) (*model.TotalInfo
 			model.FileNode{
 				FileInfo:     file,
 				Depth:        depth,
+				Size:         file.Size(),
 				ConnectStack: connectStack,
 				IsLastNode:   idx == fileCount,
 			}.PrintNode()

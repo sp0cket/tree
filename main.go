@@ -12,6 +12,7 @@ var flagAll = flag.Bool("a", false, "List all files, default false")
 var flagDepth = flag.Int("depth", 0, "Max depth, default all")
 var flagPath = flag.String("p", ".", "Working path, default is current path")
 var flagOutput = flag.String("o", "", "Set output file, default to console")
+var flagShowFileSize = flag.Bool("s", true, "Flag show file size, default true")
 
 func main() {
 	flag.Parse()
