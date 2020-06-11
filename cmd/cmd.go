@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/mattn/go-isatty"
 	"os"
+	"tree/model"
 )
 
 var (
@@ -11,11 +12,15 @@ var (
 	errorOutput = os.Stderr
 )
 
-func Output(f *os.File) {
+func SetOutput(f *os.File) {
 	output = f
 }
 
-func PrintN(node FileNode) {
+func GetOutput() *os.File {
+	return output
+}
+
+func PrintN(node model.FileNode) {
 	if _, err := fmt.Fprintln(output, node.String()); err != nil {
 		PrintError(err)
 		os.Exit(-1)
@@ -33,6 +38,6 @@ func Println(a ...interface{}) {
 	}
 }
 
-func isTerminal(f *os.File) bool {
-	return isatty.IsTerminal(f.Fd())
+func IsTerminal() bool {
+	return isatty.IsTerminal(output.Fd())
 }

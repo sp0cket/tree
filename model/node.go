@@ -1,4 +1,4 @@
-package cmd
+package model
 
 import (
 	"container/list"
@@ -40,9 +40,7 @@ func (node *FileNode) String() string {
 	name := node.FileInfo.Name()
 	if node.FileInfo.IsDir() {
 		name += "/"
-		if isTerminal(output) {
-			name = "\033[35m" + name + "\033[0m"
-		}
+		name = "\033[35m" + name + "\033[0m"
 	}
 	str += name
 	return str

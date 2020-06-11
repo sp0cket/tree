@@ -6,6 +6,7 @@ import (
 	"path"
 	"strings"
 	"tree/cmd"
+	"tree/model"
 )
 
 var (
@@ -13,19 +14,20 @@ var (
 	FlagDepth int
 )
 
-func Visit(visitPath string) error {
-	return visit(visitPath, 0, list.New())
+func Walk(walkPath string) (*model.TotalInfo, error) {
+	return walk(walkPath, 0, list.New())
 }
 
-func visit(visitPath string, depth int, connectStack *list.List) error {
-	filesInfo, err := ioutil.ReadDir(visitPath)
+func walk(walkPath string, depth int, connectStack *list.List) (*model.TotalInfo, error) {
+	filesInfo, err := ioutil.ReadDir(walkPath)
+	totalInfo := &model.TotalInfo{}
 	if err == nil {
 		fileCount := len(filesInfo) - 1
 		for idx, file := range filesInfo {
 			if FlagAll == false && strings.HasPrefix(file.Name(), ".") {
 				continue
 			}
-			cmd.PrintN(cmd.FileNode{
+			cmd.PrintN(model.FileNode{
 				FileInfo:     file,
 				Depth:        depth,
 				ConnectStack: connectStack,
@@ -39,14 +41,19 @@ func visit(visitPath string, depth int, connectStack *list.List) error {
 				if idx < fileCount {
 					nextConnStack.PushBack(depth)
 				}
-				if err := visit(path.Join(visitPath, file.Name()), depth+1, nextConnStack); err != nil {
-					return err
+				if info, err := walk(path.Join(walkPath, file.Name()), depth+1, nextConnStack); err != nil {
+					return nil, err
+				} else {
+					totalInfo.Add(info)
 				}
 				if idx < fileCount {
 					nextConnStack.Remove(nextConnStack.Back())
 				}
+				totalInfo.FileCount += 1
+			} else {
+				totalInfo.DirectoryCount += 1
 			}
 		}
 	}
-	return err
+	return totalInfo, err
 }
